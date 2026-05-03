@@ -1,39 +1,79 @@
 const quizData = [
-  { question: "Which of these is a strong password?",
-    options: ["123456", "Password", "P@ssw0rd!2026"],
-    answer: "P@ssw0rd!2026" },
-  { question: "Phishing attacks usually happen via?",
-    options: ["Emails", "USB drives", "RAM chips"],
-    answer: "Emails" },
-  { question: "SQL stands for?",
-    options: ["Structured Query Language", "Simple Question List", "Secure Query Logic"],
-    answer: "Structured Query Language" }
+  {
+    question: "Which of these is a strong password?",
+    options: ["123456", "qwerty", "P@ssw0rd!2026", "password"],
+    answer: "P@ssw0rd!2026"
+  },
+  {
+    question: "What does HTTPS stand for?",
+    options: [
+      "HyperText Transfer Protocol Secure",
+      "High Transfer Text Protocol Standard",
+      "Hyperlink Transfer Text Process",
+      "Hyper Transfer Protocol Service"
+    ],
+    answer: "HyperText Transfer Protocol Secure"
+  },
+  {
+    question: "Which one is a phishing attempt?",
+    options: [
+      "Email from your bank asking to confirm login details",
+      "Message from a friend",
+      "Official government website",
+      "News article"
+    ],
+    answer: "Email from your bank asking to confirm login details"
+  },
+  {
+    question: "What is the safest way to connect to public Wi-Fi?",
+    options: [
+      "Use without protection",
+      "Use a VPN",
+      "Disable firewall",
+      "Share files openly"
+    ],
+    answer: "Use a VPN"
+  },
+  {
+    question: "Which of these is an example of two-factor authentication?",
+    options: [
+      "Password only",
+      "Fingerprint + password",
+      "Username only",
+      "PIN only"
+    ],
+    answer: "Fingerprint + password"
+  }
 ];
 
-const quizContainer = document.getElementById("quiz-container");
-const submitBtn = document.getElementById("submit");
+let currentQuestion = 0;
+let score = 0;
 
-function loadQuiz() {
-  quizData.forEach((q, index) => {
-    const div = document.createElement("div");
-    div.innerHTML = `<h3>${q.question}</h3>` +
-      q.options.map(opt =>
-        `<label><input type="radio" name="q${index}" value="${opt}"> ${opt}</label><br>`
-      ).join("");
-    quizContainer.appendChild(div);
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+
+function loadQuestion() {
+  const q = quizData[currentQuestion];
+  questionEl.textContent = q.question;
+  optionsEl.innerHTML = "";
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = () => {
+      if (opt === q.answer) score++;
+      nextQuestion();
+    };
+    optionsEl.appendChild(btn);
   });
 }
 
-submitBtn.addEventListener("click", () => {
-  let score = 0;
-  quizData.forEach((q, index) => {
-    const selected = document.querySelector(`input[name="q${index}"]:checked`);
-    if (selected && selected.value === q.answer) {
-      score++;
-    }
-  });
-  // Redirect to results page with score
-  window.location.href = `results.html?score=${score}&total=${quizData.length}`;
-});
+function nextQuestion() {
+  currentQuestion++;
+  if (currentQuestion < quizData.length) {
+    loadQuestion();
+  } else {
+    window.location.href = `result.html?score=${score}&total=${quizData.length}`;
+  }
+}
 
-loadQuiz();
+loadQuestion();
